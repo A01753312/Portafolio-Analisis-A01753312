@@ -1,4 +1,7 @@
 # 1. importar librerias
+import sys
+from pathlib import Path
+
 import pandas as pd
 import matplotlib.pyplot as plt
 
@@ -14,9 +17,23 @@ from sklearn.metrics import (
 )
 
 #2. cargar dataset
-dataset = pd.read_csv(
-    "figure_skating_dataset.csv"
-)
+BASE_DIR = Path(__file__).resolve().parent
+DATASET_PATH = BASE_DIR / "figure_skating_dataset.csv"
+
+if not DATASET_PATH.exists():
+    print(f"Error: no se encontró el archivo '{DATASET_PATH.name}' en {BASE_DIR}")
+    print("Coloca el dataset en la misma carpeta que este archivo o ajusta la ruta.")
+    sys.exit(1)
+
+try:
+    dataset = pd.read_csv(DATASET_PATH)
+except Exception as exc:
+    print(f"Error al cargar el dataset: {exc}")
+    sys.exit(1)
+
+if "Qualified" not in dataset.columns:
+    print("Error: la columna 'Qualified' no existe en el dataset.")
+    sys.exit(1)
 
 X = dataset.drop(
     columns=["Qualified"]
